@@ -62,6 +62,8 @@ var purpleDinoInterval;
 var laser;
 var laserInterval;
 
+var spark;
+
 //////////////////////////
 //add bird and bat monster
 var yellowBirds;
@@ -169,6 +171,8 @@ var state = {
     this.load.spritesheet("purpleDino", "assets/purple-dino.png", 118, 150);
 
     this.load.image("laser", "assets/laser.png");
+    this.load.image("spark", "assets/spark.png");
+
     this.load.image('water', 'assets/water.png');
     this.load.audio('fox', ['assets/sounds/fox.mp3']);
     this.load.audio('gorillaz', ['assets/sounds/gorillaz.mp3']);
@@ -285,6 +289,7 @@ var state = {
 
     purpleDinos = game.add.group();
     lasers = game.add.group();
+    sparks = game.add.group();
 
     orangeDinos = game.add.group();
 
@@ -484,6 +489,12 @@ var state = {
         }
       });
 
+      sparks.forEach(function(l) {
+        if(l && l.body.x < 0 || l.body.y > 1000 || l.body.y < -1000) {
+          l.kill();
+        }
+      });
+
 
       yellowBirds.forEach(function(p) {
         if(p && p.body.x < -150) {
@@ -556,6 +567,8 @@ var state = {
     } else if(ACCELERATE && !this.player.dead){
       this.player.body.velocity.x += Math.cos(RAD_ANGLE)*20;
       this.player.body.velocity.y += Math.sin(RAD_ANGLE)*(20);
+
+      this.spawnSpark(this.player.body.x+30, this.player.body.y+20);
       // this.player.body.velocity.y = 400;
       // this.player.body.velocity.x = degrees;
     } else {
@@ -1014,6 +1027,16 @@ var state = {
     this.laser.body.velocity.x = Math.cos(RAD_ANGLE)*300;
     this.laser.body.velocity.y = Math.sin(RAD_ANGLE)*300;
     this.laser.angle = ANGLE;
+  },
+
+  spawnSpark: function(x,y) {
+    this.spark = sparks.create(x, y, 'spark');
+    this.physics.arcade.enableBody(this.spark);
+    this.spark.body.immovable = true;
+    this.spark.anchor.setTo(0.5, 0.5);
+    this.spark.body.velocity.x = Math.cos(RAD_ANGLE)*-300;
+    this.spark.body.velocity.y = Math.sin(RAD_ANGLE)*-300;
+    this.spark.angle = ANGLE;
   },
   spawnFish: function() {
     this.fish = fishes.create(700, 650, 'fish');
