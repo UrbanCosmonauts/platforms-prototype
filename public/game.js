@@ -18,6 +18,8 @@ var RESET = false;
 var RESETGAMEOVER = false;
 var GAMECONTEXT;
 var PLAYERS_ARRAY = [];
+var TIME = 0;
+var SCORE = 0;
 
 
 /*
@@ -40,6 +42,8 @@ var platformFallingInterval;
 var platformNegativeInterval;
 var platformFloatingInterval;
 
+// var coinFloatingInterval;
+
 var groundTimeout;
 
 var flyTimeout;
@@ -53,9 +57,34 @@ var purpleDinoInterval;
 var laser;
 var laserInterval;
 
+//////////////////////////
+//add bird and bat monster
+var yellowBirds;
+var yellowBirdInterval;
+
+var purpleBats;
+var purpleBatInterval;
+
+
+var brownBirds;
+var brownBirdInterval;
+
+var brownBats;
+var brownBatInterval;
+
+
+var ringCoins;
+var ringCoinInterval;
+
+var redHearts;
+var brownBatInterval;
+
+var goldKeys;
+var goldKeyInterval;
+///////////////////////////
+
 var fishes;
 var fishInterval;
-
 
 var music;
 var musicArray = ['fox', 'gorillaz', 'lucky'];
@@ -74,7 +103,6 @@ var deadEffect;
 
 var updatePosition = function(positionArray) {
 
-
   for(var i=0; i<positionArray.length; i++) {
     if(positionArray && positionArray[i]) {
       POS_X = positionArray[i].data.velocity.x;
@@ -83,9 +111,11 @@ var updatePosition = function(positionArray) {
       RAD_ANGLE = ANGLE*(Math.PI / 180)
       DECELERATE = positionArray[i].data.decelerate;
       ACCELERATE = positionArray[i].data.accelerate;
+
       if(RESET && DECELERATE) {
         GAMECONTEXT.move();
       }
+
       if(RESETGAMEOVER && DECELERATE) {
         GAMECONTEXT.reset();
       }
@@ -121,7 +151,7 @@ var state = {
   */
   preload: function() {
     console.log(this)
-    this.load.image("platform", "assets/platform.png");
+    // this.load.image("platform", "assets/platform.png");
     this.load.image("falling", "assets/falling.png");
     this.load.image("negative", "assets/negative.png");
     this.load.image("ground", "assets/ground.png");
@@ -140,9 +170,34 @@ var state = {
     this.load.audio('lucky', ['assets/sounds/lucky.mp3']);
     this.load.audio('dead', ['assets/sounds/dead.mp3']);
     this.load.audio('jump', ['assets/sounds/jump.mp3']);
+
+    ///////////////////////////////////
+    //Add flying monster
+    // this.load.spritesheet("yellowBird", "assets/orange-dino.png", 34.5, 42);
+    // this.load.spritesheet("purpleBat", "assets/purple-dino", 34.5, 42);
+    // this.load.spritesheet("brownBird", "assets/orange-dino.png", 34.5, 42);
+    // this.load.spritesheet("brownBat", "assets/purple-dino.png", 34.5, 42);
+
+    this.load.image("yellowBird", "assets/yellowBird.png");
+    this.load.image("purpleBat", "assets/purpleBat.png");
+    this.load.image("brownBat", "assets/brownBat.png");
+    this.load.image("brownBird", "assets/brownBird.png");
+    ///////////////////////////////////
+
+    /////////////////////////////////////
+    // //Gold Coin
+    // this.load.image('goldCoin', 'assets/coin.png');
+    // this.load.spritesheet("ringCoin", "assets/ringCoin.png", 34.5, 42);
+
+    this.load.image("goldKey", "assets/goldKey.png");
+    this.load.image("redHeart", "assets/redHeart.png");
+    this.load.image("ringCoin", "assets/ringCoin.png");
+
+    ////////////////////////////////////
   },
 
   /*
+
     create
     Description:
      Adds the assets into the game on load
@@ -220,7 +275,6 @@ var state = {
     platforms = game.add.group();
     platforms.enableBody = true;   
 
-
     water = game.add.group();
     water.enableBody = true; 
 
@@ -231,6 +285,19 @@ var state = {
 
     fishes = game.add.group();
 
+    //////////////////////
+    //add flying monster//
+    yellowBirds = game.add.group();
+    purpleBats = game.add.group();
+
+    brownBats = game.add.group();
+    brownBirds = game.add.group();
+
+
+    goldKeys = game.add.group();
+    redHearts = game.add.group();
+    ringCoins = game.add.group();
+    //////////////////////
 
     /*
       text
@@ -238,6 +305,7 @@ var state = {
        This adds text to a phaser game
       author: Alex Leonetti
     */
+
     this.scoreText = this.add.text(
       this.world.centerX,
       this.world.height/2,
@@ -249,7 +317,21 @@ var state = {
       }
     );
 
+
+    this.scoreBanner = this.add.text(
+      this.world.centerX,
+      this.world.height/2,
+      "",
+      {
+          size: "32px",
+          fill: "#FFF",
+          align: "top"
+      }
+    );
+
     this.scoreText.anchor.setTo(0.5, 0.5);
+
+    this.scoreBanner.anchor.setTo(0.5, 0.5);
 
     /*
       reset
@@ -266,7 +348,9 @@ var state = {
      Constantly called by the phaser engine updating all aspects of the game
     author: Alex Leonetti
   */
+
   update: function() {
+    TIME++;
 
     /*
       collide
@@ -292,10 +376,51 @@ var state = {
       item.kill();
     }, null, this);
 
+    this.physics.arcade.overlap(lasers, purpleBats, function(player, item){
+      item.kill();
+    }, null, this);
+
+    this.physics.arcade.overlap(lasers, yellowBirds, function(player, item){
+      item.kill();
+    }, null, this);
+
+    this.physics.arcade.overlap(lasers, brownBats, function(player, item){
+      item.kill();
+    }, null, this);
+
+    this.physics.arcade.overlap(players, goldKeys, function(player, item){
+      item.kill();
+      this.score++;
+    }, null, this);
+
+    this.physics.arcade.overlap(players, ringCoins, function(player, item){
+      item.kill();
+      this.score++;
+    }, null, this);
+
+    this.physics.arcade.overlap(players, redHearts, function(player, item){
+      item.kill();
+      this.score++;
+    }, null, this);
+
+
 
 
     this.physics.arcade.collide(players, fishes, this.setGameOver, null, this);
 
+    this.physics.arcade.collide(players, yellowBirds, this.setGameOver, null, this);
+    this.physics.arcade.collide(players, purpleBats, this.setGameOver, null, this);
+    this.physics.arcade.collide(players, brownBirds, this.setGameOver, null, this);
+    this.physics.arcade.collide(players, brownBats, this.setGameOver, null, this);
+
+    // this.physics.arcade.overlap(players, ringCoin, this.incrementScore, null, this);
+    // this.physics.arcade.overlap(players, redHeart, this.incrementScore, null, this);
+    // this.physics.arcade.overlap(players, goldKey, this.incrementScore, null, this);
+    
+
+    //increment the score when hit the coin
+    // this.physics.arcade.collide(players, ringCoin, this.setGameOver, null, this);
+    // this.physics.arcade.collide(players, goldCoin, this.setGameOver, null, this);
     /*
       kill()
       Description:
@@ -317,6 +442,31 @@ var state = {
       lasers.forEach(function(l) {
         if(l && l.body.x > 1000 || l.body.y > 1000 || l.body.y < -1000) {
           l.kill();
+        }
+      });
+
+
+      yellowBirds.forEach(function(p) {
+        if(p && p.body.x < -150) {
+          p.kill();
+        }
+      });
+
+      purpleBats.forEach(function(p) {
+        if(p && p.body.x < -150) {
+          p.kill();
+        }
+      });
+
+      brownBats.forEach(function(p) {
+        if(p && p.body.x < -150) {
+          p.kill();
+        }
+      });
+
+      brownBirds.forEach(function(p) {
+        if(p && p.body.x < -150) {
+          p.kill();
         }
       });
     }
@@ -373,15 +523,33 @@ var state = {
       this.player.body.velocity.x *= .9;//-99*(SPEED/100);
       this.player.body.velocity.y *= .9;
     }
-    
- 
-
+  
     /*
       animations
       Description:
         Depending on the velocity of the character it will change character animations
       author: Alex Leonetti
     */
+
+    yellowBirds.forEach(function(yellowBird){
+        yellowBird.body.velocity.y = Math.sin(TIME/20)*150;
+        // yellowBird.body.velocity.y = -SPEED*Math.sin(game.time.now);
+        // yellowBird.body.velocity.x = SPEED*Math.cos(game.time.now);
+    });
+
+    purpleBats.forEach(function(purpleBat){
+        purpleBat.body.velocity.y = Math.sin(TIME/20)*250;
+        // yellowBird.body.velocity.y = -SPEED*Math.sin(game.time.now);
+        // yellowBird.body.velocity.x = SPEED*Math.cos(game.time.now);
+    });
+
+    brownBats.forEach(function(brownBat){
+        brownBat.body.velocity.y = Math.sin(TIME/20)*180;
+        // yellowBird.body.velocity.y = -SPEED*Math.sin(game.time.now);
+        // yellowBird.body.velocity.x = SPEED*Math.cos(game.time.now);
+    });
+
+
     if(this.gameStarted){
       if(this.player.body.velocity.x > 0 && this.player.body.x<770){
         // this.player.animations.play('still');
@@ -404,12 +572,64 @@ var state = {
         this.player.body.x = 730
       }
 
-    }
-    
+      // game.time.events.repeat(1, 40000, function() {
+      //   yellowBirds.forEach(function(yellowBird){
+      //       yellowBird.body.velocity.y = -SPEED*Math.sin(game.time.now);
+      //       // yellowBird.body.velocity.x = SPEED*Math.cos(game.time.now);
+      //   });
 
+      //   brownBirds.forEach(function(brownBird){
+      //       brownBird.body.velocity.y = -SPEED*Math.sin(game.time.now);
+      //       // brownBird.body.velocity.x = SPEED*Math.cos(game.time.now);
+      //   });
+
+      //   purpleBats.forEach(function(purpleBat){
+      //       purpleBat.body.velocity.y = -SPEED*Math.sin(game.time.now);
+      //       // purpleBat.body.velocity.x = SPEED*Math.cos(game.time.now);
+      //   });
+
+      // });
+
+
+
+      // yellowBirds.forEach(function(brownBat){
+      //     // brownBat.body.velocity.x = -SPEED*Math.cos(RAD_ANGLE) - 40;
+      //   game.time.events.repeat(25, 80, function() {
+      //           brownBat.body.velocity.y = -SPEED*Math.sin(game.time.now);
+      //   }, this);
+      //   console.log('brownBat!!!!')
+
+      // });
+
+      // purpleBats.forEach(function(purpleBat){
+      //     // purpleBat.body.velocity.x = -SPEED*Math.cos(RAD_ANGLE) - 170;
+      //   game.time.events.repeat(25, 80, function() {
+      //           purpleBat.body.velocity.y = -SPEED*Math.sin(game.time.now);
+      //   }, this);
+      //   console.log('purpleBat!!!!')
+      // });
+
+      // brownBirds.forEach(function(brownBird){
+      //     // brownBird.body.velocity.x = -SPEED*Math.cos(RAD_ANGLE) - 170;
+  
+      //   game.time.events.repeat(25, 80, function() {
+      //       brownBird.body.velocity.y = -SPEED*Math.sin(game.time.now);
+      //   }, this);
+      //   console.log('brownBird!!!!')
+      // });
+
+
+    /*
+      Velocity
+      Description:
+        Updates the monster's velocity in game
+      author: Eric Le
+    */
+
+    }
+  
     // console.log(this.player.body.x);
     // console.log(this.player.body.y);
-
 
 
     /*
@@ -445,11 +665,11 @@ var state = {
     GAMECONTEXT = this;
 
     clearInterval(waterInterval);
-    clearInterval(platformInterval);
-    clearInterval(platformFallingInterval);
-    clearInterval(platformNegativeInterval);
+    // clearInterval(platformInterval);
+    // clearInterval(platformFallingInterval);
+    // clearInterval(platformNegativeInterval);
 
-    clearInterval(platformFloatingInterval);
+    // clearInterval(platformFloatingInterval);
     clearInterval(purpleDinoInterval);
     clearInterval(orangeDinoInterval);
     clearInterval(fishInterval);
@@ -458,7 +678,17 @@ var state = {
     clearTimeout(groundTimeout);
     clearTimeout(flyTimeout);
 
-    
+    clearInterval(yellowBirdInterval);
+    clearInterval(purpleBatInterval);
+    clearInterval(brownBirdInterval);
+    clearInterval(brownBatInterval);
+
+    // clearInterval(goldCoinFloatingInterval);
+    // clearInterval(ringCoinFloatingInterval);
+    // clearInterval(redHeartFloatingInterval);
+    // clearInterval(goldKeyFloatingInterval);
+
+
 
     this.player.dead = false;
     platforms.removeAll();
@@ -466,7 +696,15 @@ var state = {
     orangeDinos.removeAll();
     purpleDinos.removeAll();
     lasers.removeAll();
+
+
+    yellowBirds.removeAll();
+    purpleBats.removeAll();
+    brownBats.removeAll();
+
+
     fishes.removeAll();
+
     this.gameStarted = false;
     this.gameOver = false;
 
@@ -523,9 +761,16 @@ var state = {
     this.player.dead = false;  
     this.player.body.gravity.y = GRAVITY;
     this.scoreText.setText("");
+    
+
+    //initialize the score shown to be 0
+    this.score = 0;
+    this.scoreBanner.setText(this.score);
+
+
     this.gameStarted = true;
     this.background.autoScroll(-SPEED * .40 ,0);
-    this.ground.body.velocity.x = -SPEED;
+    // this.ground.body.velocity.x = -SPEED;
 
     this.levelGround();
     waterTimeout = setTimeout(function(){
@@ -544,13 +789,22 @@ var state = {
   move: function(){
     if(!this.gameStarted){
       clearInterval(waterInterval);
-      clearInterval(platformInterval);
-      clearInterval(platformFallingInterval);
-      clearInterval(platformNegativeInterval);
+      // clearInterval(platformInterval);
+      // clearInterval(platformFallingInterval);
+      // clearInterval(platformNegativeInterval);
 
-      clearInterval(platformFloatingInterval);
+      // clearInterval(platformFloatingInterval);
       clearInterval(purpleDinoInterval);
       clearInterval(orangeDinoInterval);
+
+      // clearInterval(ringCoinFloatingInterval);
+      // clearInterval(redHeartFloatingInterval);
+      // clearInterval(goldKeyFloatingInterval);
+
+      clearInterval(yellowBirdInterval);
+      clearInterval(purpleBatInterval);
+      clearInterval(brownBatInterval);
+      clearInterval(brownBirdInterval);
 
       clearTimeout(waterTimeout);
       clearTimeout(groundTimeout);
@@ -580,6 +834,8 @@ var state = {
     this.gameOver = true;
     this.gameStarted = false;
     this.scoreText.setText("PRESS JUMP TO\nTRY AGAIN");
+    this.score = 0;
+    this.scoreBanner.setText(this.score);
     this.background.autoScroll(0, 0);
     this.player.dead = true;
     this.player.body.x = (32 * DEAD_PLAYER_X);
@@ -733,6 +989,63 @@ var state = {
     this.fish.body.gravity.y = GRAVITY;
   },
 
+  //////////////////////////////////////////////////////////////
+  //add yellowBird and purpleBat////////////////////////////////
+
+  spawnYellowBird: function() {
+    this.yellowBird = yellowBirds.create(800, 95, 'yellowBird');
+    this.physics.arcade.enableBody(this.yellowBird);
+    this.yellowBird.body.immovable = true;
+    this.yellowBird.body.velocity.x = -SPEED;
+  },
+
+  spawnPurpleBat: function() {
+    this.purpleBat = purpleBats.create(500, 185, 'purpleBat');
+    // this.purpleBat.animations.add('fly', [0,1,2,3], 10, true);
+    // this.purpleBat.animations.play('fly');
+    this.physics.arcade.enableBody(this.purpleBat);
+    this.purpleBat.body.immovable = true;
+    this.purpleBat.body.velocity.x = -2*SPEED;
+  },
+
+  spawnBrownBat: function() {
+    this.brownBat = brownBats.create(1000, 240, 'brownBat');
+    this.physics.arcade.enableBody(this.brownBat);
+    this.brownBat.body.immovable = true;
+    this.brownBat.body.velocity.x = -SPEED;
+    this.brownBat.body.velocity.y = -SPEED;
+  },
+
+  spawnBrownBird: function() {
+    this.brownBird = brownBirds.create(1000, 200, 'brownBird');
+    this.physics.arcade.enableBody(this.brownBird);
+    this.brownBird.body.immovable = true;
+    this.brownBird.body.velocity.x = -SPEED;
+    this.brownBird.body.velocity.y = -SPEED;
+  },
+
+  /////////////////////////////////////////////////////////////
+
+  spawnRingCoin: function() {
+    this.ringCoin = ringCoins.create(600, this.generateRandomGreaterY(), 'ringCoin');
+    this.physics.arcade.enableBody(this.ringCoin);
+    this.ringCoin.body.immovable =  false;
+    this.ringCoin.body.velocity.x = -SPEED;
+  },
+
+  spawnRedHeart: function() {
+    this.redHeart = redHearts.create(600, this.generateRandomGreaterY(), 'redHeart');
+    this.physics.arcade.enableBody(this.redHeart);
+    this.redHeart.body.immovable =  false;
+    this.redHeart.body.velocity.x = -SPEED;
+  },
+
+  spawnGoldKey: function() {
+    this.goldKey = goldKeys.create(600, this.generateRandomGreaterY(), 'goldKey');
+    this.physics.arcade.enableBody(this.goldKey);
+    this.goldKey.body.immovable =  false;
+    this.goldKey.body.velocity.x = -SPEED;
+  },
 
   /*
     levelWater
@@ -743,17 +1056,21 @@ var state = {
   levelWater: function() {
     this.level = 'water';
 
-    clearInterval(platformFloatingInterval);
+    // clearInterval(platformFloatingInterval);
     clearInterval(purpleDinoInterval);
     clearInterval(orangeDinoInterval);
 
+
     this.ground = platforms.create(0, game.world.height-64, 'ground');
+
+    // this.ground = platforms.create(0, game.world.height-64, 'ground');
+
     this.ground.scale.setTo(2,2);
     this.ground.body.immovable = true;
     this.ground.body.velocity.x = -SPEED;
 
 
-    this.spawnPlatform();
+    // this.spawnPlatform();
     this.water = water.create(800, 570, 'water');
     this.water.immovable = true;
     this.water.body.velocity.x = -SPEED;
@@ -761,15 +1078,15 @@ var state = {
 
     var context = this;
     if(this.gameStarted) {
-      platformInterval = setInterval(function(){
-        context.spawnPlatform();
-      }, 3000/(SPEED/100));
-      platformFallingInterval = setInterval(function(){
-        context.spawnFallingPlatform();
-      }, (2000)/(SPEED/100));
-      platformNegativeInterval = setInterval(function(){
-        context.spawnNegativePlatform();
-      }, 8000/(SPEED/100));
+      // platformInterval = setInterval(function(){
+      //   context.spawnPlatform();
+      // }, 3000/(SPEED/100));
+      // platformFallingInterval = setInterval(function(){
+      //   context.spawnFallingPlatform();
+      // }, (2000)/(SPEED/100));
+      // platformNegativeInterval = setInterval(function(){
+      //   context.spawnNegativePlatform();
+      // }, 8000/(SPEED/100));
       fishInterval = setInterval(function() {
         context.spawnFish();
       }, 4900/(SPEED/100));
@@ -788,25 +1105,25 @@ var state = {
     this.level = 'ground';
     var context = this;
 
-    clearInterval(platformInterval);
-    clearInterval(platformFallingInterval);
-    clearInterval(platformNegativeInterval);
+    // clearInterval(platformInterval);
+    // clearInterval(platformFallingInterval);
+    // clearInterval(platformNegativeInterval);
     clearInterval(waterInterval);
     clearInterval(fishInterval);
     clearInterval(laserInterval);
 
 
-    this.ground = platforms.create(800, game.world.height-64, 'ground');
-    this.ground.scale.setTo(20,2);
-    this.ground.body.immovable = true;
-    this.ground.body.velocity.x = -SPEED;
+    // this.ground = platforms.create(800, game.world.height-64, 'ground');
+    // this.ground.scale.setTo(20,2);
+    // this.ground.body.immovable = true;
+    // this.ground.body.velocity.x = -SPEED;
 
 
-    this.spawnFloatingPlatform(350);
+    // this.spawnFloatingPlatform(350);
 
-    platformFloatingInterval = setInterval(function() {
-      context.spawnFloatingPlatform();
-    }, 3000/(SPEED/100));
+    // platformFloatingInterval = setInterval(function() {
+    //   context.spawnFloatingPlatform();
+    // }, 3000/(SPEED/100));
 
     purpleDinoInterval = setInterval(function() {
       context.spawnPurpleDino();
@@ -819,6 +1136,38 @@ var state = {
     orangeDinoInterval = setInterval(function() {
       context.spawnOrangeDino();
     }, 5000/(SPEED/100));
+
+    yellowBirdInterval = setInterval(function() {
+      context.spawnYellowBird();
+    }, 6000/(SPEED/100));
+
+    purpleBatInterval = setInterval(function() {
+      context.spawnPurpleBat();
+    }, 8000/(SPEED/100));
+
+    // goldCoinFloatingInterval = setInterval(function() {
+    //   context.spawnFloatingCoin();
+    // }, 3000/(SPEED/100));
+
+    ringCoinFloatingInterval = setInterval(function() {
+      context.spawnRingCoin();
+    }, 3000/(SPEED/100));
+
+    goldKeyFloatingInterval = setInterval(function() {
+      context.spawnGoldKey();
+    }, 3000/(SPEED/100));
+
+    redHeartFloatingInterval = setInterval(function() {
+      context.spawnRedHeart();
+    }, 3000/(SPEED/100));
+
+    brownBatInterval = setInterval(function() {
+      context.spawnBrownBat();
+    }, 8000/(SPEED/100));
+
+    brownBirdInterval = setInterval(function() {
+      context.spawnBrownBird();
+    }, 8000/(SPEED/100));
 
   },
 
