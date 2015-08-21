@@ -528,7 +528,7 @@ var state = {
         }
       });
       platforms.forEach(function(p){
-        if(p.body.x < -800 || p.body.y < -48 ) {
+        if(p.body.x < -960 || p.body.y < -48 ) {
           p.kill();
         }
       });
@@ -603,12 +603,7 @@ var state = {
 
 
     if(this.gameStarted){
-      if(this.player.body.velocity.x > 0 && this.player.body.x<770){
-        // this.player.animations.play('still');
-      } else if(this.player.body.velocity.x < -99 && this.player.body.x>10){
-        // this.player.animations.play('still');
-      } 
-
+      
       if(this.player.body.x <= 10) {
         // this.player.animations.play('still');
         this.player.body.x = 10;
@@ -620,8 +615,8 @@ var state = {
         // this.player.animations.play('still');
       } 
 
-      if (this.player.body.x >= 730) {
-        this.player.body.x = 730
+      if (this.player.body.x >= 890) {
+        this.player.body.x = 890
       }
 
       // game.time.events.repeat(1, 40000, function() {
@@ -934,26 +929,26 @@ var state = {
     author: Alex Leonetti
   */
   spawnPlatform: function() {
-    this.ledge = platforms.create(800, this.generateRandomY(), 'platform');
+    this.ledge = platforms.create(960, this.generateRandomY(), 'platform');
     this.ledge.body.immovable = true;
     this.ledge.body.velocity.x = -SPEED;
     this.ledge.scale.setTo(2,1);
   },
   spawnFallingPlatform: function() {
-    this.ledge = platforms.create(800, this.generateRandomY(), 'falling');
+    this.ledge = platforms.create(960, this.generateRandomY(), 'falling');
     this.ledge.body.immovable = false;
     this.ledge.body.velocity.x = -SPEED;
     this.ledge.scale.setTo(2,1);
   },
   spawnNegativePlatform: function() {
-    this.ledge = platforms.create(800, 600, 'negative');
+    this.ledge = platforms.create(960, 680, 'negative');
     this.ledge.body.immovable = true;
     this.ledge.body.velocity.x = -SPEED;
     this.ledge.body.velocity.y =  -(Math.random() * 200);
     this.ledge.scale.setTo(2,1);
   },
   spawnFloatingPlatform: function(y) {
-    this.ledge = platforms.create(800, y || this.generateRandomGreaterY(), 'floating');
+    this.ledge = platforms.create(960, y || this.generateRandomGreaterY(), 'floating');
     this.ledge.body.immovable = true;
     this.ledge.body.velocity.x = -SPEED;
     this.ledge.scale.setTo(2,2);
@@ -961,7 +956,7 @@ var state = {
   spawnWater: function() {
     var context = this;
     waterInterval = setInterval(function(){
-      context.water = water.create(800, 570, 'water');
+      context.water = water.create(960, 570, 'water');
       context.water.body.immovable = true;
       context.water.body.velocity.x = -SPEED;
     },3315/(SPEED/100));
@@ -1003,7 +998,7 @@ var state = {
     return this.lastGreaterNum;
   },
   spawnOrangeDino: function() {
-    this.orangeDino = orangeDinos.create(800, 495, 'orangeDino');
+    this.orangeDino = orangeDinos.create(960, 495, 'orangeDino');
     this.orangeDino.animations.add('walk', [0,1,2,3], 10, true);
     this.orangeDino.animations.play('walk');
     this.physics.arcade.enableBody(this.orangeDino);
@@ -1053,7 +1048,7 @@ var state = {
   //add yellowBird and purpleBat////////////////////////////////
 
   spawnYellowBird: function() {
-    this.yellowBird = yellowBirds.create(800, 95, 'yellowBird');
+    this.yellowBird = yellowBirds.create(960, 95, 'yellowBird');
     this.physics.arcade.enableBody(this.yellowBird);
     this.yellowBird.body.immovable = true;
     this.yellowBird.body.velocity.x = -SPEED;
@@ -1094,14 +1089,14 @@ var state = {
   },
 
   spawnRedHeart: function() {
-    this.redHeart = redHearts.create(600, this.generateRandomGreaterY(), 'redHeart');
+    this.redHeart = redHearts.create(680, this.generateRandomGreaterY(), 'redHeart');
     this.physics.arcade.enableBody(this.redHeart);
     this.redHeart.body.immovable =  false;
     this.redHeart.body.velocity.x = -SPEED;
   },
 
   spawnGoldKey: function() {
-    this.goldKey = goldKeys.create(600, this.generateRandomGreaterY(), 'goldKey');
+    this.goldKey = goldKeys.create(680, this.generateRandomGreaterY(), 'goldKey');
     this.physics.arcade.enableBody(this.goldKey);
     this.goldKey.body.immovable =  false;
     this.goldKey.body.velocity.x = -SPEED;
@@ -1131,7 +1126,7 @@ var state = {
 
 
     // this.spawnPlatform();
-    this.water = water.create(800, 570, 'water');
+    this.water = water.create(960, 570, 'water');
     this.water.immovable = true;
     this.water.body.velocity.x = -SPEED;
     this.spawnWater();
@@ -1249,8 +1244,8 @@ var state = {
   author: Alex Leonetti
 */
 var game = new Phaser.Game(
-  800,
-  600,
+  960,
+  680,
   Phaser.AUTO,
   'game',
   state
